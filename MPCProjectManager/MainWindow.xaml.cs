@@ -21,10 +21,11 @@ namespace MPCProjectManager
         private MPCProjectImporter LeftImporter { get; set; }
         public ObservableCollection<Sequence> LeftSequenceList { get; set; }
         public ObservableCollection<Sequence> RightSequenceList { get; set; }
-        public ObservableCollection<BOProgram> LeftUsedPrograms { get; set; }
-        public ObservableCollection<BOProgram> RightUsedPrograms { get; set; }
+        public ObservableCollection<BoProgram> LeftUsedPrograms { get; set; }
+        public ObservableCollection<BoProgram> RightUsedPrograms { get; set; }
         #endregion
 
+        #region propdp
         public string LeftProjectName
         {
             get => (string)GetValue(LeftProjectNameProperty);
@@ -42,7 +43,7 @@ namespace MPCProjectManager
 
         // Using a DependencyProperty as the backing store for RightProjectName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty RightProjectNameProperty = DependencyProperty.Register("RightProjectName", typeof(string), typeof(MainWindow), new PropertyMetadata(""));
-
+        #endregion
 
         #region CTOR
         /// <summary>
@@ -53,8 +54,8 @@ namespace MPCProjectManager
             InitializeComponent();
             LeftSequenceList = new ObservableCollection<Sequence>();
             RightSequenceList = new ObservableCollection<Sequence>();
-            LeftUsedPrograms = new ObservableCollection<BOProgram>();
-            RightUsedPrograms = new ObservableCollection<BOProgram>();
+            LeftUsedPrograms = new ObservableCollection<BoProgram>();
+            RightUsedPrograms = new ObservableCollection<BoProgram>();
             LeftProjectName = "ProjectName:";
             RightProjectName = "ProjectName:";
 
@@ -189,8 +190,7 @@ namespace MPCProjectManager
             File.Copy(RightImporter.GetBoSequenceFromSequenceIndex(sourceIndex).SxqFileFullPath,Path.Combine("temp",(destIndex+1).ToString()+".sxq"));
             
         }
-        #endregion
-
+        
         private void BtnSaveLeftPRoject_OnClick(object sender, RoutedEventArgs e)
         {
             //check if name exists there
@@ -207,7 +207,7 @@ namespace MPCProjectManager
 
         private void CmbLeftTarget_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            BOSequence result = new BOSequence();
+            BoSequence result = new BoSequence();
 
             foreach (var s in LeftImporter.BOSequences)
             {
@@ -227,7 +227,7 @@ namespace MPCProjectManager
 
         private void ComboBoxRightTarget_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            BOSequence result = new BOSequence();
+            BoSequence result = new BoSequence();
 
             foreach (var s in RightImporter.BOSequences)
             {
@@ -258,5 +258,6 @@ namespace MPCProjectManager
                     Directory.Delete(d);
             }
         }
+        #endregion
     }
 }

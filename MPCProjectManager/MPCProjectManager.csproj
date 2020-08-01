@@ -66,9 +66,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BO\BOProgram.cs" />
-    <Compile Include="BO\BoSampleFile.cs" />
-    <Compile Include="BO\BOSequence.cs" />
+    <Compile Include="BusinessObjects\BoProgram.cs" />
+    <Compile Include="BusinessObjects\BoSampleFile.cs" />
+    <Compile Include="BusinessObjects\BoSequence.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -90,6 +90,7 @@
     <Compile Include="Models\Locators.cs" />
     <Compile Include="Models\Mixer.cs" />
     <Compile Include="Models\MixerItem.cs" />
+    <Compile Include="Models\MPCProgramTypes.cs" />
     <Compile Include="Models\MPCVObject.cs" />
     <Compile Include="Models\MPCVObjectProgram.cs" />
     <Compile Include="Models\PadGroup.cs" />

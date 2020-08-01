@@ -34,20 +34,25 @@ namespace MPCProjectManager
             get { return ProjectFileContentFolderFullPath; }
         }
 
-        public List<BOProgram> Programs { get; set; }
+        public List<BoProgram> Programs { get; set; }
 
         public MPCProjectImporter()
         {
             sqxList = new List<Melanchall.DryWetMidi.Core.MidiFile>();
-            BOSequences = new List<BOSequence>();
-            Programs = new List<BOProgram>();
+            BOSequences = new List<BoSequence>();
+            Programs = new List<BoProgram>();
         }
         #endregion
+
+        #region public properties
 
         public Project Project { get; set; }
         public MPCVObject MpcvObject { get; set; }
         public List<Melanchall.DryWetMidi.Core.MidiFile> sqxList { get; set; }
-        public List<BOSequence> BOSequences { get; set; }
+        public List<BoSequence> BOSequences { get; set; }
+        #endregion
+
+        #region public methods
         public void ParseFile()
         {
             #region project file
@@ -93,7 +98,7 @@ namespace MPCProjectManager
             foreach (string res in programResult)
             {
                 //read name , type and path
-                BOProgram p = new BOProgram();
+                BoProgram p = new BoProgram();
                 p.ProgramFullPath = res;
                 var v = p.ProgramName.Split('.');
 
@@ -151,7 +156,7 @@ namespace MPCProjectManager
 
             foreach (Sequence s in MpcvObject.AllSequencesAndSongs.Sequences.SequenceList)
             {
-                BOSequence bos = new BOSequence();
+                BoSequence bos = new BoSequence();
                 string sxFilename = s.Number.ToString() + ".sxq";
                 bos.SequenceNumber = s.Number;
                 bos.SxqFileFullPath = Path.Combine(ProjectFileContentFolderFullPath, sxFilename);
@@ -164,19 +169,7 @@ namespace MPCProjectManager
             #endregion
 
         }
-
-        public enum MPCProgramTypes
-        {
-            Drum,
-            Keygroup,
-            Clip,
-            Midi,
-            Audio,
-            CV,
-            Plugin
-        }
-
-        public void CopyProgram(BOProgram programToCopy, string targetProgramFPath)
+        public void CopyProgram(BoProgram programToCopy, string targetProgramFPath)
         {
             //Copy the Program XML file
             File.Copy(programToCopy.ProgramFullPath,Path.Combine(targetProgramFPath,programToCopy.ProgramName));
@@ -184,8 +177,7 @@ namespace MPCProjectManager
             //copy all wav files
             
         }
-
-        public BOSequence GetBoSequenceFromSequenceIndex(int idx)
+        public BoSequence GetBoSequenceFromSequenceIndex(int idx)
         {
             foreach (var boSeq in BOSequences)
             {
@@ -197,5 +189,6 @@ namespace MPCProjectManager
 
             return null;
         }
+        #endregion
     }
 }
