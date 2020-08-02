@@ -171,23 +171,23 @@ namespace MPCProjectManager
            {
 
                // copy the *.xpm file
-               if(!File.Exists(Path.Combine(LeftImporter.ProjectFileContentFolderFullPath, p.ProgramFileName)))
+               if(!File.Exists(Path.Combine("temp", LeftImporter.ProjectFileContentFolderName, p.ProgramFileName)))
                 {
-                    File.Copy(p.ProgramFullPath, Path.Combine("temp", p.ProgramFileName));
+                    File.Copy(p.ProgramFullPath, Path.Combine("temp", LeftImporter.ProjectFileContentFolderName, p.ProgramFileName));
                 }
 
                //check if it has wav files and copy them as well
                foreach (BoSampleFile sampleFileName in p.SampleFileNames)
                {
-                   if (!File.Exists(Path.Combine("temp", sampleFileName.SampleFile)))
+                   if (!File.Exists(Path.Combine("temp", LeftImporter.ProjectFileContentFolderName, sampleFileName.SampleFile)))
                    {
-                       File.Copy(Path.Combine(RightImporter.ProjectFileContentFolderFullPath, sampleFileName.SampleFile),Path.Combine("temp",sampleFileName.SampleFile));
+                       File.Copy(Path.Combine(RightImporter.ProjectFileContentFolderFullPath, sampleFileName.SampleFile),Path.Combine("temp", LeftImporter.ProjectFileContentFolderName, sampleFileName.SampleFile));
                    }
                }
             }
 
             //copy sequence itself
-            File.Copy(RightImporter.GetBoSequenceFromSequenceIndex(sourceIndex).SxqFileFullPath,Path.Combine("temp",(destIndex+1).ToString()+".sxq"));
+            File.Copy(RightImporter.GetBoSequenceFromSequenceIndex(sourceIndex).SxqFileFullPath,Path.Combine("temp", LeftImporter.ProjectFileContentFolderName, (destIndex+1).ToString()+".sxq"));
             
         }
         
