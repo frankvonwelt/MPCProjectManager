@@ -10,6 +10,8 @@ namespace MPCProjectManager
 {
     public class MPCProjectImporter
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         #region paths
         public string ProjectFileFullPath { get; set; }
         public string ProjectFileContentFolderFullPath

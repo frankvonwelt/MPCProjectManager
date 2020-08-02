@@ -17,6 +17,7 @@ namespace MPCProjectManager
     public partial class MainWindow
     {
         #region private properties
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private MPCProjectImporter RightImporter { get; set; }
         private MPCProjectImporter LeftImporter { get; set; }
         public ObservableCollection<Sequence> LeftSequenceList { get; set; }
@@ -51,6 +52,7 @@ namespace MPCProjectManager
         /// </summary>
         public MainWindow()
         {
+            log.Info("Application started.");
             InitializeComponent();
             LeftSequenceList = new ObservableCollection<Sequence>();
             RightSequenceList = new ObservableCollection<Sequence>();
@@ -61,94 +63,119 @@ namespace MPCProjectManager
 
             DataContext = this;
 
+            log.Info("CTOR completed.");
         }
         #endregion
 
         #region private methods
         private void BtnOpenLeftProject_OnClick(object sender, RoutedEventArgs e)
         {
-            string filePath;
-            LeftImporter = new MPCProjectImporter();
-
-            //clear list from old entries
-            LeftSequenceList.Clear();
-
-            Directory.CreateDirectory("Temp");
-
-
-            //let user choose the project
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            try
             {
-                Filter = "xpj files |*.xpj*"
-            };
-            if (openFileDialog.ShowDialog(this) == false) return;
-            filePath = openFileDialog.FileNames[0];
+                log.Info("BtnOpenLeftProject_OnClick entered.");
+                string filePath;
+                LeftImporter = new MPCProjectImporter();
 
-            //import the files
-            LeftImporter.ProjectFileFullPath = filePath;
-            LeftProjectName = "ProjectName: "+ LeftImporter.ProjectName;
-            LeftImporter.ParseFile();
+                //clear list from old entries
+                LeftSequenceList.Clear();
+
+                //create workspace folder
+                Directory.CreateDirectory("Temp");
+                log.Info("cleanup left done.");
+
+                //let user choose the project
+                var openFileDialog = new Microsoft.Win32.OpenFileDialog
+                {
+                    Filter = "xpj files |*.xpj*"
+                };
+                if (openFileDialog.ShowDialog(this) == false) return;
+                filePath = openFileDialog.FileNames[0];
+
+                log.Info($"User chose {filePath}");
+
+                //import the files
+                LeftImporter.ProjectFileFullPath = filePath;
+                LeftProjectName = "ProjectName: " + LeftImporter.ProjectName;
+                LeftImporter.ParseFile();
+
+                //fill the sequence list to have always 128 sequences
+                for (int i = 1; i < 129; i++)
+                {
+                    LeftSequenceList.Add(new Sequence() {Active = "false", Name = "-Empty-", Number = i.ToString()});
+                }
+
+                //overwrite the list with empty entries with the ones that where imported
+                foreach (var seq in LeftImporter.MpcvObject.AllSequencesAndSongs.Sequences.SequenceList)
+                {
+                    LeftSequenceList[Convert.ToInt32(seq.Number) - 1].Name = seq.Name;
+
+                }
+
+                #region temp folder
+
+                //delete old content
+                EmptyTempFolder("temp");
+
+                //copy target to temp directory
+
+                File.Copy(LeftImporter.ProjectFileFullPath, Path.Combine("Temp", LeftImporter.ProjectName + ".xpj"));
+                Directory.CreateDirectory(Path.Combine("Temp", LeftImporter.ProjectFileContentFolderName));
+                foreach (var f in Directory.EnumerateFiles(LeftImporter.ProjectFileContentFolderFullPath))
+                {
+                    File.Copy(f, Path.Combine("Temp", LeftImporter.ProjectFileContentFolderName, Path.GetFileName(f)));
+                }
+
+                #endregion
+
+                log.Info("BtnOpenLeftProject_OnClick finished");
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error during importing left project",ex);
+            }
             
-            //fill the sequence list to have always 128 sequences
-            for (int i = 1; i < 129; i++)
-            {
-                LeftSequenceList.Add(new Sequence() { Active = "false", Name = "-Empty-", Number = i.ToString() });
-            }
-
-            //overwrite the list with empty entries with the ones that where imported
-            foreach (var seq in LeftImporter.MpcvObject.AllSequencesAndSongs.Sequences.SequenceList)
-            {
-                LeftSequenceList[Convert.ToInt32(seq.Number)-1].Name = seq.Name;
-             
-            }
-
-
-            #region temp folder
-
-            //delete old content
-            EmptyTempFolder("temp");
-
-            //copy target to temp directory
-
-            File.Copy(LeftImporter.ProjectFileFullPath,Path.Combine("Temp",LeftImporter.ProjectName+".xpj"));
-            Directory.CreateDirectory(Path.Combine("Temp", LeftImporter.ProjectFileContentFolderName));
-            foreach (var f in Directory.EnumerateFiles(LeftImporter.ProjectFileContentFolderFullPath))
-            {
-                File.Copy(f, Path.Combine("Temp", LeftImporter.ProjectFileContentFolderName,Path.GetFileName(f)));
-            }
-
-            #endregion
         }
 
         private void BtnOpenRightProject_OnClick(object sender, RoutedEventArgs e)
         {
-            RightImporter = new MPCProjectImporter();
-            
-            //clear list from old entries
-            RightSequenceList.Clear();
-
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            try
             {
-                Filter = "xpj files |*.xpj*"
-            };
+                log.Info("BtnOpenRightProject_OnClick entered.");
+                RightImporter = new MPCProjectImporter();
 
-            if (openFileDialog.ShowDialog(this) == false) return;
-            var filePath = openFileDialog.FileNames[0] ?? throw new ArgumentNullException("openFileDialog.FileNames[0]");
+                //clear list from old entries
+                RightSequenceList.Clear();
 
-            RightImporter.ProjectFileFullPath = filePath;
-            RightProjectName = "ProjectName: " + RightImporter.ProjectName;
-            RightImporter.ParseFile();
-            
-            //fill ALL sequences with readable content all sequences disabled
-            for (int i = 1; i < 129; i++)
-            {
-                RightSequenceList.Add(new Sequence() { Active = "false", Name = "-Empty-", Number = i.ToString() });
+                var openFileDialog = new Microsoft.Win32.OpenFileDialog
+                {
+                    Filter = "xpj files |*.xpj*"
+                };
+
+                if (openFileDialog.ShowDialog(this) == false) return;
+                var filePath = openFileDialog.FileNames[0] ?? throw new ArgumentNullException("openFileDialog.FileNames[0]");
+
+                RightImporter.ProjectFileFullPath = filePath;
+                RightProjectName = "ProjectName: " + RightImporter.ProjectName;
+                RightImporter.ParseFile();
+
+                //fill ALL sequences with readable content all sequences disabled
+                for (int i = 1; i < 129; i++)
+                {
+                    RightSequenceList.Add(new Sequence() {Active = "false", Name = "-Empty-", Number = i.ToString()});
+                }
+
+                //overwrite with importe used sequences
+                foreach (var seq in RightImporter.MpcvObject.AllSequencesAndSongs.Sequences.SequenceList)
+                {
+                    RightSequenceList[Convert.ToInt32(seq.Number) - 1].Name = seq.Name;
+
+                }
+
+                log.Info("BtnOpenRightProject_OnClick finished");
             }
-            //overwrite with importe used sequences
-            foreach (var seq in RightImporter.MpcvObject.AllSequencesAndSongs.Sequences.SequenceList)
+            catch (Exception ex)
             {
-                RightSequenceList[Convert.ToInt32(seq.Number) - 1].Name = seq.Name;
-
+                log.Error("Error during importing right project", ex);
             }
         }
 
@@ -164,6 +191,7 @@ namespace MPCProjectManager
 
         private void BtnCopyR2L_OnClick(object sender, RoutedEventArgs e)
         {
+            log.Info("BtnCopyR2L_OnClick entered.");
             int sourceIndex = ComboBoxRightTarget.SelectedIndex;
             int destIndex = CmbLeftTarget.SelectedIndex;
             //copy all programs of source sequence
@@ -188,7 +216,7 @@ namespace MPCProjectManager
 
             //copy sequence itself
             File.Copy(RightImporter.GetBoSequenceFromSequenceIndex(sourceIndex).SxqFileFullPath,Path.Combine("temp", LeftImporter.ProjectFileContentFolderName, (destIndex+1).ToString()+".sxq"));
-            
+            log.Info("BtnCopyR2L_OnClick finished");
         }
         
         private void BtnSaveLeftPRoject_OnClick(object sender, RoutedEventArgs e)
@@ -247,16 +275,28 @@ namespace MPCProjectManager
 
         private void EmptyTempFolder(string path)
         {
-            foreach (string f in Directory.GetFiles(path))
+            try
             {
-                File.Delete(f);
+                log.Info($"Cleaning folder: {path}");
+                foreach (string f in Directory.GetFiles(path))
+                {
+                    File.Delete(f);
+                }
+
+                foreach (var d in Directory.GetDirectories(path))
+                {
+                        EmptyTempFolder(d);
+                        Directory.Delete(d);
+                }
+
+                log.Info($"Cleaning folder: {path} done.");
+
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error during cleaning folder",ex);
             }
 
-            foreach (var d in Directory.GetDirectories(path))
-            {
-                    EmptyTempFolder(d);
-                    Directory.Delete(d);
-            }
         }
         #endregion
     }
