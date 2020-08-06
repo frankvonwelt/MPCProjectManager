@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Markup;
 using MPCProjectManager.BO;
 using MPCProjectManager.Models;
 
@@ -20,6 +21,11 @@ namespace MPCProjectManager
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private MPCProjectImporter RightImporter { get; set; }
         private MPCProjectImporter LeftImporter { get; set; }
+        private string LeftPathChosen { get; set; }
+        private string RightPathChosen { get; set; }
+        #endregion
+
+        #region public properties
         public ObservableCollection<Sequence> LeftSequenceList { get; set; }
         public ObservableCollection<Sequence> RightSequenceList { get; set; }
         public ObservableCollection<BoProgram> LeftUsedPrograms { get; set; }
@@ -45,7 +51,7 @@ namespace MPCProjectManager
         // Using a DependencyProperty as the backing store for RightProjectName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty RightProjectNameProperty = DependencyProperty.Register("RightProjectName", typeof(string), typeof(MainWindow), new PropertyMetadata(""));
         #endregion
-
+        
         #region CTOR
         /// <summary>
         /// 
@@ -53,6 +59,7 @@ namespace MPCProjectManager
         public MainWindow()
         {
             log.Info("Application started.");
+
             InitializeComponent();
             LeftSequenceList = new ObservableCollection<Sequence>();
             RightSequenceList = new ObservableCollection<Sequence>();
@@ -60,7 +67,6 @@ namespace MPCProjectManager
             RightUsedPrograms = new ObservableCollection<BoProgram>();
             LeftProjectName = "ProjectName:";
             RightProjectName = "ProjectName:";
-
             DataContext = this;
 
             log.Info("CTOR completed.");
@@ -73,29 +79,40 @@ namespace MPCProjectManager
             try
             {
                 log.Info("BtnOpenLeftProject_OnClick entered.");
-                string filePath;
                 LeftImporter = new MPCProjectImporter();
 
+                #region cleanup of workspace folder
                 //clear list from old entries
                 LeftSequenceList.Clear();
 
                 //create workspace folder
                 Directory.CreateDirectory("Temp");
+
+                //delete old content
+                EmptyTempFolder("temp");
+                #endregion
+
                 log.Info("cleanup left done.");
 
+                #region open file dialog
                 //let user choose the project
                 var openFileDialog = new Microsoft.Win32.OpenFileDialog
                 {
                     Filter = "xpj files |*.xpj*"
                 };
                 if (openFileDialog.ShowDialog(this) == false) return;
-                filePath = openFileDialog.FileNames[0];
+                LeftPathChosen = openFileDialog.FileNames[0];
+    
+                #endregion
 
-                log.Info($"User chose {filePath}");
+                log.Info($"User chose {LeftPathChosen}");
+
+                CopyLeftProjectToWorkSpace(LeftPathChosen);
 
                 //import the files
-                LeftImporter.ProjectFileFullPath = filePath;
+                LeftImporter.ProjectFileFullPath = Path.Combine("temp", Path.GetFileName(LeftPathChosen));
                 LeftProjectName = "ProjectName: " + LeftImporter.ProjectName;
+
                 LeftImporter.ParseFile();
 
                 //fill the sequence list to have always 128 sequences
@@ -110,22 +127,6 @@ namespace MPCProjectManager
                     LeftSequenceList[Convert.ToInt32(seq.Number) - 1].Name = seq.Name;
 
                 }
-
-                #region temp folder
-
-                //delete old content
-                EmptyTempFolder("temp");
-
-                //copy target to temp directory
-
-                File.Copy(LeftImporter.ProjectFileFullPath, Path.Combine("Temp", LeftImporter.ProjectName + ".xpj"));
-                Directory.CreateDirectory(Path.Combine("Temp", LeftImporter.ProjectFileContentFolderName));
-                foreach (var f in Directory.EnumerateFiles(LeftImporter.ProjectFileContentFolderFullPath))
-                {
-                    File.Copy(f, Path.Combine("Temp", LeftImporter.ProjectFileContentFolderName, Path.GetFileName(f)));
-                }
-
-                #endregion
 
                 log.Info("BtnOpenLeftProject_OnClick finished");
             }
@@ -297,6 +298,20 @@ namespace MPCProjectManager
                 log.Error("Error during cleaning folder",ex);
             }
 
+        }
+
+        private void CopyLeftProjectToWorkSpace(string pathToProjectFile)
+        {
+            string destFilename = Path.Combine("Temp", Path.GetFileNameWithoutExtension(pathToProjectFile) + ".xpj");
+            //copy target to temp directory
+            File.Copy(pathToProjectFile, destFilename);
+            Directory.CreateDirectory(Path.Combine("Temp", Path.GetFileNameWithoutExtension(pathToProjectFile) + "_[ProjectData]"));
+            var test = Path.Combine("Temp", Path.GetDirectoryName(pathToProjectFile), (Path.GetFileNameWithoutExtension(pathToProjectFile) + "_[ProjectData]"));
+            foreach (var f in Directory.EnumerateFiles(test))
+            {
+                string dest = Path.Combine(Path.GetFileNameWithoutExtension(pathToProjectFile) + "_[ProjectData]", Path.GetFileName(f));                
+                File.Copy(f, Path.Combine("Temp", dest));
+            }
         }
         #endregion
     }

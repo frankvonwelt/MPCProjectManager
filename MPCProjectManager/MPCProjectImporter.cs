@@ -18,7 +18,6 @@ namespace MPCProjectManager
         {
             get { return Path.Combine(Path.GetDirectoryName(ProjectFileFullPath), ProjectName + "_[ProjectData]"); }
         }
-
         public string ProjectFileContentFolderName
         {
             get { return ProjectName + "_[ProjectData]"; }
@@ -37,7 +36,9 @@ namespace MPCProjectManager
         }
 
         public List<BoProgram> Programs { get; set; }
+        #endregion
 
+        #region CTOR
         public MPCProjectImporter()
         {
             sqxList = new List<Melanchall.DryWetMidi.Core.MidiFile>();
