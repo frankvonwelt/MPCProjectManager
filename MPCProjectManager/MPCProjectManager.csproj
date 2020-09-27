@@ -72,6 +72,7 @@
     <Compile Include="BusinessObjects\BoProgram.cs" />
     <Compile Include="BusinessObjects\BoSampleFile.cs" />
     <Compile Include="BusinessObjects\BoSequence.cs" />
+    <Compile Include="BusinessObjects\CopyJob.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

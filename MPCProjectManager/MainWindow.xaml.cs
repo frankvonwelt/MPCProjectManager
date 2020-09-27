@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using MPCProjectManager.BO;
+using MPCProjectManager.BusinessObjects;
 using MPCProjectManager.Models;
 
 
@@ -23,6 +24,8 @@ namespace MPCProjectManager
         private MPCProjectImporter LeftImporter { get; set; }
         private string LeftPathChosen { get; set; }
         private string RightPathChosen { get; set; }
+
+        private List<CopyJob> CopyJobs { get; set; }
         #endregion
 
         #region public properties
@@ -81,18 +84,8 @@ namespace MPCProjectManager
                 log.Info("BtnOpenLeftProject_OnClick entered.");
                 LeftImporter = new MPCProjectImporter();
 
-                #region cleanup of workspace folder
                 //clear list from old entries
                 LeftSequenceList.Clear();
-
-                //create workspace folder
-                Directory.CreateDirectory("Temp");
-
-                //delete old content
-                EmptyTempFolder("temp");
-                #endregion
-
-                log.Info("cleanup left done.");
 
                 #region open file dialog
                 //let user choose the project
@@ -102,17 +95,12 @@ namespace MPCProjectManager
                 };
                 if (openFileDialog.ShowDialog(this) == false) return;
                 LeftPathChosen = openFileDialog.FileNames[0];
-    
                 #endregion
-
                 log.Info($"User chose {LeftPathChosen}");
 
-                CopyLeftProjectToWorkSpace(LeftPathChosen);
-
                 //import the files
-                LeftImporter.ProjectFileFullPath = Path.Combine("temp", Path.GetFileName(LeftPathChosen));
+                LeftImporter.ProjectFileFullPath = LeftPathChosen;
                 LeftProjectName = "ProjectName: " + LeftImporter.ProjectName;
-
                 LeftImporter.ParseFile();
 
                 //fill the sequence list to have always 128 sequences
@@ -125,7 +113,6 @@ namespace MPCProjectManager
                 foreach (var seq in LeftImporter.MpcvObject.AllSequencesAndSongs.Sequences.SequenceList)
                 {
                     LeftSequenceList[Convert.ToInt32(seq.Number) - 1].Name = seq.Name;
-
                 }
 
                 log.Info("BtnOpenLeftProject_OnClick finished");
@@ -147,15 +134,19 @@ namespace MPCProjectManager
                 //clear list from old entries
                 RightSequenceList.Clear();
 
+                #region open file dialog
                 var openFileDialog = new Microsoft.Win32.OpenFileDialog
                 {
                     Filter = "xpj files |*.xpj*"
                 };
 
                 if (openFileDialog.ShowDialog(this) == false) return;
-                var filePath = openFileDialog.FileNames[0] ?? throw new ArgumentNullException("openFileDialog.FileNames[0]");
+                RightPathChosen = openFileDialog.FileNames[0] ?? throw new ArgumentNullException("openFileDialog.FileNames[0]");
+                #endregion
 
-                RightImporter.ProjectFileFullPath = filePath;
+                log.Info($"User chose {RightPathChosen}");
+                
+                RightImporter.ProjectFileFullPath = RightPathChosen;
                 RightProjectName = "ProjectName: " + RightImporter.ProjectName;
                 RightImporter.ParseFile();
 
@@ -169,7 +160,6 @@ namespace MPCProjectManager
                 foreach (var seq in RightImporter.MpcvObject.AllSequencesAndSongs.Sequences.SequenceList)
                 {
                     RightSequenceList[Convert.ToInt32(seq.Number) - 1].Name = seq.Name;
-
                 }
 
                 log.Info("BtnOpenRightProject_OnClick finished");
@@ -193,30 +183,62 @@ namespace MPCProjectManager
         private void BtnCopyR2L_OnClick(object sender, RoutedEventArgs e)
         {
             log.Info("BtnCopyR2L_OnClick entered.");
-            int sourceIndex = ComboBoxRightTarget.SelectedIndex;
-            int destIndex = CmbLeftTarget.SelectedIndex;
-            //copy all programs of source sequence
-           foreach (var p in RightImporter.GetBoSequenceFromSequenceIndex(sourceIndex).UsedBoPrograms)
-           {
-
-               // copy the *.xpm file
-               if(!File.Exists(Path.Combine("temp", LeftImporter.ProjectFileContentFolderName, p.ProgramFileName)))
+            int sourceIndex = ComboBoxRightTarget.SelectedIndex+1;
+            int destIndex = CmbLeftTarget.SelectedIndex+1;
+            CopyJobs = new List<CopyJob>();
+            try
+            {
+                //copy all programs of source sequence
+                foreach (var p in RightImporter.GetBoSequenceFromSequenceIndex(sourceIndex).UsedBoPrograms)
                 {
-                    File.Copy(p.ProgramFullPath, Path.Combine("temp", LeftImporter.ProjectFileContentFolderName, p.ProgramFileName));
+
+                    // copy the *.xpm file
+                    var t = Path.Combine(LeftImporter.ProjectFileContentFolderFullPath, p.ProgramFileName);
+                    if (!File.Exists(t))
+                    {
+                        CopyJobs.Add(new CopyJob(p.ProgramFullPath, t));
+                    }
+
+                    //check if it has wav files and copy them as well
+                    foreach (BoSampleFile sampleFileName in p.SampleFileNames)
+                    {
+                        var wavet = Path.Combine(LeftImporter.ProjectFileContentFolderFullPath, sampleFileName.SampleFile);
+
+                        if (!File.Exists(wavet))
+                        {
+                            CopyJobs.Add(new CopyJob(Path.Combine(RightImporter.ProjectFileContentFolderFullPath, sampleFileName.SampleFile), wavet));
+                        }
+                    }
                 }
 
-               //check if it has wav files and copy them as well
-               foreach (BoSampleFile sampleFileName in p.SampleFileNames)
-               {
-                   if (!File.Exists(Path.Combine("temp", LeftImporter.ProjectFileContentFolderName, sampleFileName.SampleFile)))
-                   {
-                       File.Copy(Path.Combine(RightImporter.ProjectFileContentFolderFullPath, sampleFileName.SampleFile),Path.Combine("temp", LeftImporter.ProjectFileContentFolderName, sampleFileName.SampleFile));
-                   }
-               }
+                ////copy sequence itself
+                CopyJobs.Add(new CopyJob(RightImporter.GetBoSequenceFromSequenceIndex(sourceIndex).SxqFileFullPath, Path.Combine(LeftImporter.ProjectFileContentFolderFullPath, (destIndex + 1).ToString() + ".sxq")));
+
+                //add a sequence object to the all senquences and songs object
+                Sequence sequenceToAdd = new Sequence();
+                sequenceToAdd.Name = ((Sequence) ComboBoxRightTarget.SelectedItem).Name;
+                sequenceToAdd.Number = (destIndex).ToString();
+                sequenceToAdd.Active = true.ToString();
+
+                LeftImporter.MpcvObject.AllSequencesAndSongs.Sequences.SequenceList.Add(sequenceToAdd);
+                LeftImporter.MpcvObject.SaveToFile(LeftImporter.AllSequencesAndSongsFullPath);
+                foreach (var cjob in CopyJobs)
+                {
+                    File.Copy(cjob.SourceFullPath, cjob.DestinationFullPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error("error copying sequence cotent",ex);
             }
 
-            //copy sequence itself
-            File.Copy(RightImporter.GetBoSequenceFromSequenceIndex(sourceIndex).SxqFileFullPath,Path.Combine("temp", LeftImporter.ProjectFileContentFolderName, (destIndex+1).ToString()+".sxq"));
+            // update the UI
+            //overwrite the list with empty entries with the ones that where imported
+            foreach (var seq in LeftImporter.MpcvObject.AllSequencesAndSongs.Sequences.SequenceList)
+            {
+                LeftSequenceList[Convert.ToInt32(seq.Number) - 1].Name = seq.Name;
+            }
+
             log.Info("BtnCopyR2L_OnClick finished");
         }
         
@@ -313,6 +335,7 @@ namespace MPCProjectManager
                 File.Copy(f, Path.Combine("Temp", dest));
             }
         }
+        
         #endregion
     }
 }
