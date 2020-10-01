@@ -210,7 +210,7 @@ namespace MPCProjectManager
                 }
 
                 ////copy sequence itself
-                CopyJobs.Add(new CopyJob(RightImporter.GetBoSequenceFromSequenceIndex(sourceIndex).SxqFileFullPath, Path.Combine(LeftImporter.ProjectFileContentFolderFullPath, (destIndex + 1).ToString() + ".sxq")));
+                CopyJobs.Add(new CopyJob(RightImporter.GetBoSequenceFromSequenceIndex(sourceIndex).SxqFileFullPath, Path.Combine(LeftImporter.ProjectFileContentFolderFullPath, (destIndex).ToString() + ".sxq")));
 
                 //add a sequence object to the all senquences and songs object
                 Sequence sequenceToAdd = new Sequence();
