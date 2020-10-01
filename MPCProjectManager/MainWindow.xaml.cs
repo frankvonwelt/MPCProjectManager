@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Markup;
 using MPCProjectManager.BO;
 using MPCProjectManager.BusinessObjects;
 using MPCProjectManager.Models;
-
 
 namespace MPCProjectManager
 {
@@ -185,6 +182,7 @@ namespace MPCProjectManager
             log.Info("BtnCopyR2L_OnClick entered.");
             int sourceIndex = ComboBoxRightTarget.SelectedIndex+1;
             int destIndex = CmbLeftTarget.SelectedIndex+1;
+            log.Info($"copy Sequence {sourceIndex} ({RightSequenceList[sourceIndex-1].Name}) to {destIndex} ({LeftSequenceList[destIndex].Name})");
             CopyJobs = new List<CopyJob>();
             try
             {
@@ -234,10 +232,7 @@ namespace MPCProjectManager
 
             // update the UI
             //overwrite the list with empty entries with the ones that where imported
-            foreach (var seq in LeftImporter.MpcvObject.AllSequencesAndSongs.Sequences.SequenceList)
-            {
-                LeftSequenceList[Convert.ToInt32(seq.Number) - 1].Name = seq.Name;
-            }
+            LeftSequenceList[destIndex].Name = RightSequenceList[sourceIndex].Name;
 
             log.Info("BtnCopyR2L_OnClick finished");
         }

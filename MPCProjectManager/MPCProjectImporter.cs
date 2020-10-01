@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using MPCProjectManager.BO;
@@ -139,19 +140,25 @@ namespace MPCProjectManager
                    || p.ProgramType == MPCProgramTypes.Clip 
                    || p.ProgramType == MPCProgramTypes.Keygroup)
                 { 
+                    //search all instruments.. there are always 128
                     foreach (Instrument i in p.MpcvObjectProgram.Program.Instruments.Instrument)
                     {
+                        //search all4 layers of each program
                         foreach (Layer l in i.Layers.Layer)
                         {
                             if(!string.IsNullOrEmpty(l.SampleName))
                             {
-                                p.SampleFileNames.Add(new BoSampleFile(){SampleFileName = l.SampleName, SampleFileExtension = "WAV"});
+                                //only add it if not already in list
+                                if (p.SampleFileNames.Count(s => s.SampleFileName.Equals(l.SampleName)) == 0)
+                                { 
+                                    p.SampleFileNames.Add(new BoSampleFile() { SampleFileName = l.SampleName, SampleFileExtension = "WAV" });
+                                }
                             }
                         }
                     }
                 }
-                Programs.Add(p);
-
+                //add samples if we found some.
+                if(p.SampleFileNames.Count >0) Programs.Add(p);
             }
             #endregion
 
