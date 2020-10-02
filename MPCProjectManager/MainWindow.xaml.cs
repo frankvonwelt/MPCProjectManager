@@ -227,27 +227,33 @@ namespace MPCProjectManager
             }
             catch (Exception ex)
             {
-                log.Error("error copying sequence cotent",ex);
+                log.Error("error copying sequence content",ex);
             }
-
-            // update the UI
+            
+            log.Info("Updating the UI"); 
             //overwrite the list with empty entries with the ones that where imported
             LeftSequenceList[destIndex].Name = RightSequenceList[sourceIndex].Name;
+
+            //clear list from old entries
+            LeftSequenceList.Clear();
+
+            //fill the sequence list to have always 128 sequences
+            for (int i = 1; i < 129; i++)
+            {
+                LeftSequenceList.Add(new Sequence() { Active = "false", Name = "-Empty-", Number = i.ToString() });
+            }
+
+            //overwrite the list with empty entries with the ones that where imported
+            foreach (var seq in LeftImporter.MpcvObject.AllSequencesAndSongs.Sequences.SequenceList)
+            {
+                LeftSequenceList[Convert.ToInt32(seq.Number) - 1].Name = seq.Name;
+            }
 
             log.Info("BtnCopyR2L_OnClick finished");
         }
         
-        private void BtnSaveLeftPRoject_OnClick(object sender, RoutedEventArgs e)
+        private void BtnSaveLeftProject_OnClick(object sender, RoutedEventArgs e)
         {
-            //check if name exists there
-            
-            //create project xml file
-
-            //crate project data folder
-
-            //copy all programs (including wav files)
-
-            //copy all sequences
 
         }
 
