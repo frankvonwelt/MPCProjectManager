@@ -50,8 +50,23 @@ namespace MPCProjectManager
 
         // Using a DependencyProperty as the backing store for RightProjectName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty RightProjectNameProperty = DependencyProperty.Register("RightProjectName", typeof(string), typeof(MainWindow), new PropertyMetadata(""));
+
+
+
+
+        public bool btCopyR2LEnabled
+        {
+            get { return (bool)GetValue(btCopyR2LEnabledProperty); }
+            set { SetValue(btCopyR2LEnabledProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for btCopyR2LEnabled.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty btCopyR2LEnabledProperty =
+            DependencyProperty.Register("btCopyR2LEnabled", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
+
         #endregion
-        
+
         #region CTOR
         /// <summary>
         /// 
@@ -189,23 +204,29 @@ namespace MPCProjectManager
                 //copy all programs of source sequence
                 foreach (var p in RightImporter.GetBoSequenceFromSequenceIndex(sourceIndex).UsedBoPrograms)
                 {
-
-                    // copy the *.xpm file
-                    var t = Path.Combine(LeftImporter.ProjectFileContentFolderFullPath, p.ProgramFileName);
-                    if (!File.Exists(t))
+                    try
                     {
-                        CopyJobs.Add(new CopyJob(p.ProgramFullPath, t));
-                    }
-
-                    //check if it has wav files and copy them as well
-                    foreach (BoSampleFile sampleFileName in p.SampleFileNames)
-                    {
-                        var wavet = Path.Combine(LeftImporter.ProjectFileContentFolderFullPath, sampleFileName.SampleFile);
-
-                        if (!File.Exists(wavet))
+                        //copy the *.xpm file
+                        var t = Path.Combine(LeftImporter.ProjectFileContentFolderFullPath, p.ProgramFileName);
+                        if (!File.Exists(t))
                         {
-                            CopyJobs.Add(new CopyJob(Path.Combine(RightImporter.ProjectFileContentFolderFullPath, sampleFileName.SampleFile), wavet));
+                            CopyJobs.Add(new CopyJob(p.ProgramFullPath, t));
                         }
+
+                        //check if it has wav files and copy them as well
+                        foreach (BoSampleFile sampleFileName in p.SampleFileNames)
+                        {
+                            var wavet = Path.Combine(LeftImporter.ProjectFileContentFolderFullPath, sampleFileName.SampleFile);
+
+                            if (!File.Exists(wavet))
+                            {
+                                CopyJobs.Add(new CopyJob(Path.Combine(RightImporter.ProjectFileContentFolderFullPath, sampleFileName.SampleFile), wavet));
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error($"Error processing used programs");
                     }
                 }
 
@@ -219,17 +240,30 @@ namespace MPCProjectManager
                 sequenceToAdd.Active = true.ToString();
 
                 LeftImporter.MpcvObject.AllSequencesAndSongs.Sequences.SequenceList.Add(sequenceToAdd);
+                //TODO Sort sequencelist before serializing:
+                //LeftImporter.MpcvObject.AllSequencesAndSongs.Sequences.SequenceList.Sort()
                 LeftImporter.MpcvObject.SaveToFile(LeftImporter.AllSequencesAndSongsFullPath);
+                log.Info($"AllSequences file saved to {LeftImporter.AllSequencesAndSongsFullPath}");
+                 
                 foreach (var cjob in CopyJobs)
                 {
-                    File.Copy(cjob.SourceFullPath, cjob.DestinationFullPath);
+                    try
+                    {
+                        log.Info($"Executing file copy job: {cjob.SourceFullPath} to {cjob.DestinationFullPath}");
+                        File.Copy(cjob.SourceFullPath, cjob.DestinationFullPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error($"Error during file copy job.",ex);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                log.Error("error copying sequence content",ex);
+                log.Error("General error copying sequence content",ex);
             }
-            
+
+            #region UI Update
             log.Info("Updating the UI"); 
             //overwrite the list with empty entries with the ones that where imported
             LeftSequenceList[destIndex].Name = RightSequenceList[sourceIndex].Name;
@@ -248,6 +282,7 @@ namespace MPCProjectManager
             {
                 LeftSequenceList[Convert.ToInt32(seq.Number) - 1].Name = seq.Name;
             }
+            #endregion
 
             log.Info("BtnCopyR2L_OnClick finished");
         }
@@ -259,8 +294,15 @@ namespace MPCProjectManager
 
         private void CmbLeftTarget_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            log.Info($"CmbLeftTarget_OnSelectionChanged with added items count:{e.AddedItems.Count} ");
+            btCopyR2LEnabled = false;
+            if (e.AddedItems.Count == 0)
+            {
+                log.Error("nothing choosen.. returning..");                
+                return;
+            }
+            btCopyR2LEnabled = true;
             BoSequence result = new BoSequence();
-
             foreach (var s in LeftImporter.BOSequences)
             {
                 if(s.SequenceNumber.Equals(((Sequence)e.AddedItems[0]).Number))
@@ -268,13 +310,12 @@ namespace MPCProjectManager
                     result = s;
                 }
             }
-
             LeftUsedPrograms.Clear();
-
             foreach (var resultUsedBoProgram in result.UsedBoPrograms)
             {
                 LeftUsedPrograms.Add(resultUsedBoProgram);
             }
+            
         }
 
         private void ComboBoxRightTarget_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -323,20 +364,6 @@ namespace MPCProjectManager
 
         }
 
-        private void CopyLeftProjectToWorkSpace(string pathToProjectFile)
-        {
-            string destFilename = Path.Combine("Temp", Path.GetFileNameWithoutExtension(pathToProjectFile) + ".xpj");
-            //copy target to temp directory
-            File.Copy(pathToProjectFile, destFilename);
-            Directory.CreateDirectory(Path.Combine("Temp", Path.GetFileNameWithoutExtension(pathToProjectFile) + "_[ProjectData]"));
-            var test = Path.Combine("Temp", Path.GetDirectoryName(pathToProjectFile), (Path.GetFileNameWithoutExtension(pathToProjectFile) + "_[ProjectData]"));
-            foreach (var f in Directory.EnumerateFiles(test))
-            {
-                string dest = Path.Combine(Path.GetFileNameWithoutExtension(pathToProjectFile) + "_[ProjectData]", Path.GetFileName(f));                
-                File.Copy(f, Path.Combine("Temp", dest));
-            }
-        }
-        
         #endregion
     }
 }

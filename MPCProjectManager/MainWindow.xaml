@@ -46,7 +46,7 @@
         </StackPanel>
         <StackPanel Grid.Column="1" VerticalAlignment="Center">
             <Button Name="BtnCopyL2R" Margin="4" Click="BtnCopyL2R_OnClick" Visibility="Collapsed">Copy --&gt; </Button>
-            <Button Name="BtnCopyR2L" Margin="4" Click="BtnCopyR2L_OnClick">&lt;--Copy</Button>
+            <Button Name="BtnCopyR2L" Margin="4" Click="BtnCopyR2L_OnClick" IsEnabled="{Binding btCopyR2LEnabled, Mode=OneWay}">&lt;--Copy</Button>
             <Button Name="BtnSaveLeftPRoject" Click="BtnSaveLeftProject_OnClick" Visibility="Collapsed">Save as</Button>
         </StackPanel>
         <StackPanel Grid.Column="2">
