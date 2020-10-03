@@ -244,11 +244,19 @@ namespace MPCProjectManager
                 //LeftImporter.MpcvObject.AllSequencesAndSongs.Sequences.SequenceList.Sort()
                 LeftImporter.MpcvObject.SaveToFile(LeftImporter.AllSequencesAndSongsFullPath);
                 log.Info($"AllSequences file saved to {LeftImporter.AllSequencesAndSongsFullPath}");
-                 
+                
                 foreach (var cjob in CopyJobs)
                 {
                     try
                     {
+                        string fileEntry = $"./{LeftImporter.ProjectFileContentFolderName}/{Path.GetFileName(cjob.DestinationFullPath)}";
+                        if (!LeftImporter.Project.FileList.File.Contains(fileEntry))
+                        {
+                            if(!fileEntry.EndsWith(".sxq"))
+                            { 
+                                LeftImporter.Project.FileList.File.Add(fileEntry);
+                            }
+                        }
                         log.Info($"Executing file copy job: {cjob.SourceFullPath} to {cjob.DestinationFullPath}");
                         File.Copy(cjob.SourceFullPath, cjob.DestinationFullPath);
                     }
@@ -257,6 +265,9 @@ namespace MPCProjectManager
                         log.Error($"Error during file copy job.",ex);
                     }
                 }
+                //save project including filelist
+                LeftImporter.Project.SaveToFile(LeftImporter.ProjectFileFullPath);
+                
             }
             catch (Exception ex)
             {

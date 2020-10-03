@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.IO;
+using System.Xml.Serialization;
 
 namespace MPCProjectManager.Models
 {
@@ -62,7 +63,20 @@ namespace MPCProjectManager.Models
         public string Notes { get; set; }
         [XmlElement(ElementName = "Key")]
         public string Key { get; set; }
-	}
+
+        public void SaveToFile(string path)
+        {
+            using (FileStream file = File.Open(path, FileMode.Create))
+            {
+                Save(file);
+            }
+        }
+        private void Save(Stream stream)
+        {
+            XmlSerializer serializer = new XmlSerializer(GetType());
+            serializer.Serialize(stream, this);
+        }
+    }
 
 
 
