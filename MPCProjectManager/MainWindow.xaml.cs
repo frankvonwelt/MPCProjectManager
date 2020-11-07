@@ -173,7 +173,6 @@ namespace MPCProjectManager
                 {
                     RightSequenceList[Convert.ToInt32(seq.Number) - 1].Name = seq.Name;
                 }
-
                 log.Info("BtnOpenRightProject_OnClick finished");
             }
             catch (Exception ex)
@@ -195,6 +194,21 @@ namespace MPCProjectManager
         private void BtnCopyR2L_OnClick(object sender, RoutedEventArgs e)
         {
             log.Info("BtnCopyR2L_OnClick entered.");
+
+            #region check input data
+            if (ComboBoxRightTarget.SelectedItem == null)
+            {
+                MessageBox.Show("No source sequence chosen.","Error", MessageBoxButton.OK); 
+                return;
+            }
+
+            if (CmbLeftTarget.SelectedItem == null)
+            {
+                MessageBox.Show("No destination sequence chosen.", "Error", MessageBoxButton.OK);
+                return;
+            }
+            #endregion
+            
             int sourceIndex = ComboBoxRightTarget.SelectedIndex+1;
             int destIndex = CmbLeftTarget.SelectedIndex+1;
             log.Info($"copy Sequence {sourceIndex} ({RightSequenceList[sourceIndex-1].Name}) to {destIndex} ({LeftSequenceList[destIndex].Name})");

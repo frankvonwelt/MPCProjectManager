@@ -85,6 +85,7 @@
     <Compile Include="Models\AudioRoute.cs" />
     <Compile Include="Models\EmulationType.cs" />
     <Compile Include="Models\FileList.cs" />
+    <Compile Include="Models\Insert.cs" />
     <Compile Include="Models\Instrument.cs" />
     <Compile Include="Models\Instruments.cs" />
     <Compile Include="Models\Layer.cs" />

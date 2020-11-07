@@ -7,6 +7,9 @@ namespace MPCProjectManager.Models
         [XmlElement(ElementName = "Xfader.Position")]
         public string XfaderPosition { get; set; }
 
+        [XmlElement(ElementName = "Xfader.Route")]
+        public string XfaderRoute { get; set; }
+
         [XmlElement(ElementName = "Xfader.Curve")]
         public string XfaderCurve { get; set; }
 
@@ -15,6 +18,30 @@ namespace MPCProjectManager.Models
 
         [XmlElement(ElementName = "AudioRoute")]
         public AudioRoute AudioRoute { get; set; }
+
+        [XmlElement(ElementName = "Insert1")]
+        public Insert Insert1 { get; set; }
+        
+        [XmlElement(ElementName = "InsertEnable1")]
+        public string InsertEnable1 { get; set; }
+
+        [XmlElement(ElementName = "Insert2")]
+        public Insert Insert2 { get; set; }
+
+        [XmlElement(ElementName = "InsertEnable2")]
+        public string InsertEnable2 { get; set; }
+
+        [XmlElement(ElementName = "Insert3")]
+        public Insert Insert3 { get; set; }
+
+        [XmlElement(ElementName = "InsertEnable3")]
+        public string InsertEnable3 { get; set; }
+
+        [XmlElement(ElementName = "Insert4")]
+        public Insert Insert4 { get; set; }
+
+        [XmlElement(ElementName = "InsertEnable4")]
+        public string InsertEnable4 { get; set; }
 
         [XmlElement(ElementName = "Send1")]
         public float Send1 { get; set; }
