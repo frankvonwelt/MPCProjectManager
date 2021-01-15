@@ -51,9 +51,6 @@ namespace MPCProjectManager
         // Using a DependencyProperty as the backing store for RightProjectName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty RightProjectNameProperty = DependencyProperty.Register("RightProjectName", typeof(string), typeof(MainWindow), new PropertyMetadata(""));
 
-
-
-
         public bool btCopyR2LEnabled
         {
             get { return (bool)GetValue(btCopyR2LEnabledProperty); }
@@ -281,7 +278,6 @@ namespace MPCProjectManager
                 }
                 //save project including filelist
                 LeftImporter.Project.SaveToFile(LeftImporter.ProjectFileFullPath);
-                
             }
             catch (Exception ex)
             {

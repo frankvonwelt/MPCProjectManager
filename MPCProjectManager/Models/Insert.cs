@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 
 namespace MPCProjectManager.Models
 {
+    [XmlRoot(ElementName = "Insert")]
     public class Insert
     {
         [XmlElement(ElementName = "Is64Bits")]

@@ -109,7 +109,11 @@
     <Compile Include="Models\Locator.cs" />
     <Compile Include="Models\Locators.cs" />
     <Compile Include="Models\Mixer.cs" />
+    <Compile Include="Models\MixerInput.cs" />
     <Compile Include="Models\MixerItem.cs" />
+    <Compile Include="Models\MixerOutput.cs" />
+    <Compile Include="Models\MixerReturn.cs" />
+    <Compile Include="Models\MixerSubmix.cs" />
     <Compile Include="Models\MPCProgramTypes.cs" />
     <Compile Include="Models\MPCVObject.cs" />
     <Compile Include="Models\MPCVObjectProgram.cs" />

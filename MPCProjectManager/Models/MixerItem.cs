@@ -2,10 +2,10 @@
 
 namespace MPCProjectManager.Models
 {
-    public class MixerItem
+    public class MMixerItem
     {
-        [XmlElement(ElementName = "Xfader.Position")]
-        public string XfaderPosition { get; set; }
+        //[XmlElement(ElementName = "Xfader.Position")]
+        //public string XfaderPosition { get; set; }
 
         [XmlElement(ElementName = "Xfader.Route")]
         public string XfaderRoute { get; set; }
