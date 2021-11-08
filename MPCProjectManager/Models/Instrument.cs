@@ -25,43 +25,7 @@ namespace MPCProjectManager.Models
 		public string Pan { get; set; }
 		[XmlElement(ElementName = "AutomationFilter")]
 		public string AutomationFilter { get; set; }
-		[XmlElement(ElementName = "TuneCoarse")]
-		public string TuneCoarse { get; set; }
-		[XmlElement(ElementName = "TuneFine")]
-		public string TuneFine { get; set; }
-		[XmlElement(ElementName = "Mono")]
-		public string Mono { get; set; }
-		[XmlElement(ElementName = "Polyphony")]
-		public string Polyphony { get; set; }
-		[XmlElement(ElementName = "FilterKeytrack")]
-		public string FilterKeytrack { get; set; }
-		[XmlElement(ElementName = "LowNote")]
-		public string LowNote { get; set; }
-		[XmlElement(ElementName = "HighNote")]
-		public string HighNote { get; set; }
-		[XmlElement(ElementName = "IgnoreBaseNote")]
-		public string IgnoreBaseNote { get; set; }
-		[XmlElement(ElementName = "ZonePlay")]
-		public string ZonePlay { get; set; }
-		[XmlElement(ElementName = "MuteGroup")]
-		public string MuteGroup { get; set; }
-		[XmlElement(ElementName = "MuteTarget1")]
-		public string MuteTarget1 { get; set; }
-		[XmlElement(ElementName = "MuteTarget2")]
-		public string MuteTarget2 { get; set; }
-		[XmlElement(ElementName = "MuteTarget3")]
-		public string MuteTarget3 { get; set; }
-		[XmlElement(ElementName = "MuteTarget4")]
-		public string MuteTarget4 { get; set; }
-		[XmlElement(ElementName = "SimultTarget1")]
-		public string SimultTarget1 { get; set; }
-		[XmlElement(ElementName = "SimultTarget2")]
-		public string SimultTarget2 { get; set; }
-		[XmlElement(ElementName = "SimultTarget3")]
-		public string SimultTarget3 { get; set; }
-		[XmlElement(ElementName = "SimultTarget4")]
-		public string SimultTarget4 { get; set; }
-		[XmlElement(ElementName = "LfoPitch")]
+        [XmlElement(ElementName = "LfoPitch")]
 		public string LfoPitch { get; set; }
 		[XmlElement(ElementName = "LfoCutoff")]
 		public string LfoCutoff { get; set; }
@@ -97,6 +61,12 @@ namespace MPCProjectManager.Models
 		public string FilterSustain { get; set; }
 		[XmlElement(ElementName = "FilterRelease")]
 		public string FilterRelease { get; set; }
+        [XmlElement(ElementName = "FilterAttackCurve")]
+		public string FilterAttackCurve { get; set; }
+        [XmlElement(ElementName = "FilterDecayCurve")]
+		public string FilterDecayCurve { get; set; }
+        [XmlElement(ElementName = "FilterReleaseCurve")]
+		public string FilterReleaseCurve { get; set; }
 		[XmlElement(ElementName = "FilterHold")]
 		public string FilterHold { get; set; }
 		[XmlElement(ElementName = "FilterDecayType")]
@@ -117,7 +87,35 @@ namespace MPCProjectManager.Models
 		public string VolumeSustain { get; set; }
 		[XmlElement(ElementName = "VolumeRelease")]
 		public string VolumeRelease { get; set; }
-		[XmlElement(ElementName = "VelocityToPitch")]
+        [XmlElement(ElementName = "VolumeAttackCurve")]
+		public string VolumeAttackCurve { get; set; }
+        [XmlElement(ElementName = "VolumeDecayCurve")]
+        public string VolumeDecayCurve { get; set; }
+        [XmlElement(ElementName = "VolumeReleaseCurve")]
+		public string VolumeReleaseCurve { get; set; }
+        [XmlElement(ElementName = "PitchHold")]
+        public string PitchHold { get; set; }
+        [XmlElement(ElementName = "PitchDecayType")]
+        public string PitchDecayType { get; set; }
+        [XmlElement(ElementName = "PitchADEnvelope")]
+        public string PitchADEnvelope { get; set; }
+        [XmlElement(ElementName = "PitchAttack")]
+        public string PitchAttack { get; set; }
+        [XmlElement(ElementName = "PitchDecay")]
+        public string PitchDecay { get; set; }
+        [XmlElement(ElementName = "PitchSustain")]
+        public string PitchSustain { get; set; }
+        [XmlElement(ElementName = "PitchRelease")]
+        public string PitchRelease { get; set; }
+        [XmlElement(ElementName = "PitchAttackCurve")]
+        public string PitchAttackCurve { get; set; }
+        [XmlElement(ElementName = "PitchDecayCurve")]
+        public string PitchDecayCurve { get; set; }
+        [XmlElement(ElementName = "PitchReleaseCurve")]
+        public string PitchReleaseCurve { get; set; }
+        [XmlElement(ElementName = "PitchEnvAmount")]
+        public string PitchEnvAmount { get; set; }
+        [XmlElement(ElementName = "VelocityToPitch")]
 		public string VelocityToPitch { get; set; }
 		[XmlElement(ElementName = "VelocityToVolumeAttack")]
 		public string VelocityToVolumeAttack { get; set; }
@@ -125,9 +123,60 @@ namespace MPCProjectManager.Models
 		public string VelocitySensitivity { get; set; }
 		[XmlElement(ElementName = "VelocityToPan")]
 		public string VelocityToPan { get; set; }
-		[XmlElement(ElementName = "LFO")]
+        [XmlElement(ElementName = "RandomizationScale")]
+        public string RandomizationScale { get; set; }
+        [XmlElement(ElementName = "AttackRandom")]
+        public string AttackRandom { get; set; }
+        [XmlElement(ElementName = "DecayRandom")]
+        public string DecayRandom { get; set; }
+        [XmlElement(ElementName = "CutoffRandom")]
+        public string CutoffRandom { get; set; }
+        [XmlElement(ElementName = "ResonanceRandom")]
+        public string ResonanceRandom { get; set; }
+        [XmlElement(ElementName = "LFO")]
 		public LFO LFO { get; set; }
-		[XmlElement(ElementName = "WarpTempo")]
+
+        [XmlElement(ElementName = "DrumPadEffects")]
+        public DrumPadEffects DrumPadEffects { get; set; }
+        [XmlElement(ElementName = "TuneCoarse")]
+        public string TuneCoarse { get; set; }
+        [XmlElement(ElementName = "TuneFine")]
+        public string TuneFine { get; set; }
+        [XmlElement(ElementName = "Mono")]
+        public string Mono { get; set; }
+        [XmlElement(ElementName = "Polyphony")]
+        public string Polyphony { get; set; }
+        [XmlElement(ElementName = "FilterKeytrack")]
+        public string FilterKeytrack { get; set; }
+        [XmlElement(ElementName = "LowNote")]
+        public string LowNote { get; set; }
+        [XmlElement(ElementName = "HighNote")]
+        public string HighNote { get; set; }
+        [XmlElement(ElementName = "IgnoreBaseNote")]
+        public string IgnoreBaseNote { get; set; }
+        [XmlElement(ElementName = "ZonePlay")]
+        public string ZonePlay { get; set; }
+        [XmlElement(ElementName = "MuteGroup")]
+        public string MuteGroup { get; set; }
+        [XmlElement(ElementName = "MuteTarget1")]
+        public string MuteTarget1 { get; set; }
+        [XmlElement(ElementName = "MuteTarget2")]
+        public string MuteTarget2 { get; set; }
+        [XmlElement(ElementName = "MuteTarget3")]
+        public string MuteTarget3 { get; set; }
+        [XmlElement(ElementName = "MuteTarget4")]
+        public string MuteTarget4 { get; set; }
+        [XmlElement(ElementName = "SimultTarget1")]
+        public string SimultTarget1 { get; set; }
+        [XmlElement(ElementName = "SimultTarget2")]
+        public string SimultTarget2 { get; set; }
+        [XmlElement(ElementName = "SimultTarget3")]
+        public string SimultTarget3 { get; set; }
+        [XmlElement(ElementName = "SimultTarget4")]
+        public string SimultTarget4 { get; set; }
+        [XmlElement(ElementName = "TriggerMode")]
+        public string TriggerMode { get; set; }
+        [XmlElement(ElementName = "WarpTempo")]
 		public string WarpTempo { get; set; }
 		[XmlElement(ElementName = "BpmLock")]
 		public string BpmLock { get; set; }

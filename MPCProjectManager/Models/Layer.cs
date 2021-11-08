@@ -2,9 +2,7 @@
 
 namespace MPCProjectManager.Models
 {
-
-
-	[XmlRoot(ElementName = "Layer")]
+    [XmlRoot(ElementName = "Layer")]
 	public class Layer
 	{
 		[XmlElement(ElementName = "Active")]
@@ -43,6 +41,16 @@ namespace MPCProjectManager.Models
 		public string KeyTrack { get; set; }
 		[XmlElement(ElementName = "SampleName")]
 		public string SampleName { get; set; }
+
+        [XmlElement(ElementName = "PitchRandom")]
+        public string PitchRandom { get; set; }
+        [XmlElement(ElementName = "VolumeRandom")]
+        public string VolumeRandom { get; set; }
+        [XmlElement(ElementName = "PanRandom")]
+        public string PanRandom { get; set; }
+        [XmlElement(ElementName = "OffsetRandom")]
+        public string OffsetRandom { get; set; }
+
 		[XmlElement(ElementName = "SampleFile")]
 		public string SampleFile { get; set; }
 		[XmlElement(ElementName = "SliceIndex")]
@@ -59,7 +67,13 @@ namespace MPCProjectManager.Models
 		public string SliceLoopStart { get; set; }
 		[XmlElement(ElementName = "SliceLoop")]
 		public string SliceLoop { get; set; }
-		[XmlAttribute(AttributeName = "number")]
+        [XmlElement(ElementName = "SliceLoopCrossFadeLength")]
+        public string SliceLoopCrossFadeLength { get; set; }
+        [XmlElement(ElementName = "SliceTailPosition")]
+        public string SliceTailPosition { get; set; }
+        [XmlElement(ElementName = "SliceTailLength")]
+        public string SliceTailLength { get; set; }
+        [XmlAttribute(AttributeName = "number")]
 		public string Number { get; set; }
 	}
 }
