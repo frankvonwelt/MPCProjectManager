@@ -98,6 +98,8 @@
     <Compile Include="MidiFile\SequenceFile.cs" />
     <Compile Include="Models\AllSequencesAndSongs.cs" />
     <Compile Include="Models\AudioRoute.cs" />
+    <Compile Include="Models\DrumPadEffect.cs" />
+    <Compile Include="Models\DrumPadEffects.cs" />
     <Compile Include="Models\EmulationType.cs" />
     <Compile Include="Models\FileList.cs" />
     <Compile Include="Models\Insert.cs" />
