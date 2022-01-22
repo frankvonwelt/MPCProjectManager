@@ -120,7 +120,6 @@
     <Compile Include="Models\MixerSubmix.cs" />
     <Compile Include="Models\MPCProgramTypes.cs" />
     <Compile Include="Models\MPCVObject.cs" />
-    <Compile Include="Models\MPCVObjectProgram.cs" />
     <Compile Include="Models\PadGroup.cs" />
     <Compile Include="Models\PadGroupMap.cs" />
     <Compile Include="Models\PadNote.cs" />

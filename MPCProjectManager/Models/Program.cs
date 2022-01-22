@@ -7,7 +7,10 @@ namespace MPCProjectManager.Models
     {
         [XmlElement(ElementName = "ProgramName")]
         public string ProgramName { get; set; }
-
+        [XmlElement(ElementName = "ProgramPads-v2.10")]
+        public string ProgramPadsv210 { get; set; }
+        [XmlElement(ElementName = "CueBusEnable")]
+        public string CueBusEnable { get; set; }
         [XmlElement(ElementName = "inputSource")]
         public string inputSource { get; set; }
         [XmlElement(ElementName = "ProgramPads")]
@@ -42,6 +45,12 @@ namespace MPCProjectManager.Models
         public string Mono { get; set; }
         [XmlElement(ElementName = "Program_Polyphony")]
         public string Program_Polyphony { get; set; }
+        [XmlElement(ElementName = "PortamentoTime")]
+        public string PortamentoTime { get; set; }
+        [XmlElement(ElementName = "PortamentoLegato")]
+        public string PortamentoLegato { get; set; }
+        [XmlElement(ElementName = "PortamentoQuantized")]
+        public string PortamentoQuantized { get; set; }
         [XmlElement(ElementName = "Instruments")]
         public Instruments Instruments { get; set; }
         [XmlElement(ElementName = "PadNoteMap")]

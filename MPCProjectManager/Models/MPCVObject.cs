@@ -12,6 +12,8 @@ namespace MPCProjectManager.Models
         [XmlElement(ElementName = "AllSeqSamps")]
         public AllSequencesAndSongs AllSequencesAndSongs { get; set; }
 
+        [XmlElement(ElementName = "Program")]
+        public Program Program { get; set; }
         public void SaveToFile(string path)
         {
             using (FileStream file = File.Open(path, FileMode.Create))

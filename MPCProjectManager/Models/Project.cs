@@ -10,7 +10,10 @@ namespace MPCProjectManager.Models
     
         [XmlElement(ElementName = "ProductCode")]
         public string ProductCode { get; set; }
-        
+
+        [XmlElement(ElementName = "CurrentTrack")]
+        public string CurrentTrack { get; set; }
+
         [XmlElement(ElementName = "BPM")]
         public float BPM { get; set; }
         

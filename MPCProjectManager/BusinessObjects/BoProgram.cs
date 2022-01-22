@@ -16,7 +16,7 @@ namespace MPCProjectManager.BO
         {
             get { return Path.GetFileName(ProgramFullPath); }
         }
-        public MPCVObjectProgram MpcvObjectProgram { get; set; }
+        public MPCVObject MpcvObjectProgram { get; set; }
         public MPCProgramTypes ProgramType { get; set; }
         public List<BoSampleFile> SampleFileNames { get; set; }
         public BoProgram()

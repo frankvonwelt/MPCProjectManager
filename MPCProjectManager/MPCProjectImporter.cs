@@ -121,12 +121,12 @@ namespace MPCProjectManager
                 //read xml content (Deserialize)
                 try
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(MPCVObjectProgram));
+                    XmlSerializer serializer = new XmlSerializer(typeof(MPCVObject));
                     using (var stream = File.Open(p.ProgramFullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     using (XmlReader reader = XmlReader.Create(stream))
                     {
                         reader.MoveToContent();
-                        p.MpcvObjectProgram = (MPCVObjectProgram) serializer.Deserialize(reader);
+                        p.MpcvObjectProgram = (MPCVObject) serializer.Deserialize(reader);
                     }
                 }
                 catch (Exception ex)
